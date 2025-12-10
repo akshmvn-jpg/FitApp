@@ -2,549 +2,520 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Fitness Tracker & TDEE Calculator</title>
-    
-    <script src="https://cdn.tailwindcss.com/"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
-        .app-container {
+        body {
             font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* GitHub Dark Theme Background */
-            min-height: 100vh;
-            color: #d1d5db; /* Default text color (gray-300) */
-            padding: 4px;
+            background-color: #000000;
+            color: #e4e4e7; /* zinc-200 */
         }
-        .card {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+        /* Studia-like Card Style */
+        .studia-card {
+            background-color: #18181b; /* zinc-900 */
+            border: 1px solid #27272a; /* zinc-800 */
+            border-radius: 1rem;
+            transition: all 0.2s ease;
         }
-        /* Dark mode stripe for table rows */
-        .data-row:nth-child(odd) {
-            background-color: #27303d; 
+        .studia-card:hover {
+            border-color: #3f3f46; /* zinc-700 */
+            transform: translateY(-1px);
         }
-        /* Active Tab Styling */
-        .tab.active {
-            background-color: #1f2937; /* Gray-800 */
-            border-bottom: 3px solid #34d399; /* Green-400 accent */
-            color: #34d399; 
+
+        /* Nav Item Styles */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            color: #a1a1aa; /* zinc-400 */
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .nav-item:hover {
+            background-color: #27272a;
+            color: #fff;
+        }
+        .nav-item.active {
+            background-color: #27272a;
+            color: #fff;
+        }
+        
+        /* Input Styles */
+        .studia-input {
+            background-color: #000;
+            border: 1px solid #27272a;
+            color: white;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        .studia-input:focus {
+            outline: none;
+            border-color: #10b981; /* emerald-500 */
         }
     </style>
 </head>
-<body>
-    <div class="app-container">
-        <div class="max-w-4xl mx-auto p-4 sm:p-8">
-            <header class="text-center mb-6 p-1 rounded-xl">
-                <h1 class="text-3xl font-extrabold text-green-400 mb-2">Fitness Tracker & TDEE Calculator</h1>
-                <p class="text-gray-400 text-sm">Focusing on exercise and energy expenditure.</p>
-            </header>
+<body class="flex h-screen overflow-hidden">
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                <div class="bg-indigo-700 text-white p-4 rounded-xl card text-center">
-                    <p class="text-xs font-semibold uppercase opacity-80">Total Workouts</p>
-                    <p id="stat-total-workouts" class="text-2xl font-bold mt-1">0</p>
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-black border-r border-zinc-800 hidden md:flex flex-col p-6">
+        <div class="flex items-center gap-3 mb-10 px-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-green-600"></div>
+            <h1 class="text-xl font-bold tracking-tight text-white">FitTrack AI</h1>
+        </div>
+
+        <nav class="space-y-1 flex-1">
+            <div class="nav-item active" onclick="switchView('dashboard')">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Dashboard
+            </div>
+            <div class="nav-item" onclick="switchView('workouts')">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                Log Workout
+            </div>
+            <div class="nav-item" onclick="switchView('nutrition')">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                Nutrition
+            </div>
+            <div class="nav-item" onclick="switchView('profile')">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                Profile & TDEE
+            </div>
+        </nav>
+
+        <div class="pt-6 border-t border-zinc-800">
+            <div class="flex items-center gap-3 px-2">
+                <div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400">ID</div>
+                <div class="overflow-hidden">
+                    <p class="text-sm font-medium text-white">User</p>
+                    <p class="text-xs text-zinc-500 truncate" id="user-id-display">Loading...</p>
                 </div>
-                <div class="bg-red-700 text-white p-4 rounded-xl card text-center">
-                    <p class="text-xs font-semibold uppercase opacity-80">Total Burned Calories</p>
-                    <p id="stat-total-burned" class="text-2xl font-bold mt-1">0</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MOBILE NAV -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-black border-t border-zinc-800 z-50 flex justify-around p-3">
+         <button onclick="switchView('dashboard')" class="p-2 text-zinc-400 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg></button>
+         <button onclick="switchView('workouts')" class="p-2 text-zinc-400 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></button>
+         <button onclick="switchView('nutrition')" class="p-2 text-zinc-400 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></button>
+         <button onclick="switchView('profile')" class="p-2 text-zinc-400 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8">
+        
+        <!-- Header Section -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-white mb-1">Welcome back</h2>
+            <p class="text-zinc-500">Here's your daily fitness breakdown.</p>
+        </div>
+
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="space-y-6">
+            <!-- Top Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="studia-card p-5">
+                    <p class="text-xs font-medium text-zinc-400 uppercase tracking-wide">Calories Burned</p>
+                    <p id="stat-burned" class="text-3xl font-bold text-white mt-1">0</p>
+                    <div class="mt-2 h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-orange-500 w-3/4"></div>
+                    </div>
                 </div>
-                <div class="bg-yellow-700 text-white p-4 rounded-xl card text-center">
-                    <p class="text-xs font-semibold uppercase opacity-80">Your TDEE (kcal)</p>
-                    <p id="stat-tdee" class="text-2xl font-bold mt-1">N/A</p>
+                <div class="studia-card p-5">
+                    <p class="text-xs font-medium text-zinc-400 uppercase tracking-wide">Calories Consumed</p>
+                    <p id="stat-consumed" class="text-3xl font-bold text-white mt-1">0</p>
+                    <div class="mt-2 h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 w-1/2"></div>
+                    </div>
                 </div>
+                <div class="studia-card p-5">
+                    <p class="text-xs font-medium text-zinc-400 uppercase tracking-wide">Net Balance</p>
+                    <p id="stat-balance" class="text-3xl font-bold text-white mt-1">0</p>
+                    <p id="stat-balance-desc" class="text-xs text-zinc-500 mt-1">Maintenance</p>
                 </div>
-
-            <div class="flex border-b border-gray-700 mb-6 overflow-x-auto">
-                <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition active" onclick="switchView('workout')">
-                    Workouts
-                </button>
-                <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition" onclick="switchView('tdee')">
-                    TDEE / Profile
-                </button>
-                </div>
-
-            <div id="workout-view">
-                <div class="bg-gray-800 p-6 rounded-xl card mb-8">
-                    <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Workout</h2>
-                    <p class="text-sm text-gray-500 mb-4">Calories are calculated automatically: Total Reps &times; 1.5 kcal.</p>
-                    <form id="workout-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <input type="hidden" id="workout-id">
-
-                        <div>
-                            <label for="w-date" class="block text-sm font-medium text-gray-400 mb-1">Date</label>
-                            <input type="date" id="w-date" required class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-
-                        <div>
-                            <label for="w-activity" class="block text-sm font-medium text-gray-400 mb-1">Activity</label>
-                            <input type="text" id="w-activity" placeholder="e.g., Squats, Running" required
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-
-                        <div>
-                            <label for="w-sets" class="block text-sm font-medium text-gray-400 mb-1">Sets</label>
-                            <input type="number" id="w-sets" placeholder="Total Sets" required min="1"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-
-                        <div>
-                            <label for="w-reps" class="block text-sm font-medium text-gray-400 mb-1">Avg Reps per Set</label>
-                            <input type="number" id="w-reps" placeholder="Avg Reps" required min="1"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-
-                        <div class="lg:col-span-4 mt-2">
-                            <button type="submit" id="w-submit-btn"
-                                    class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
-                                Add Workout
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="bg-gray-800 p-6 rounded-xl card overflow-x-auto">
-                    <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Workout History</h2>
-                    <table class="min-w-full divide-y divide-gray-700">
-                        <thead>
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Activity</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Sets</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Avg Reps</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Calculated Calories (kcal)</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="workout-list" class="bg-gray-800 divide-y divide-gray-700">
-                        </tbody>
-                    </table>
-                    <p id="w-no-data-message" class="text-center text-gray-500 p-4 hidden">No workouts logged yet. Get moving!</p>
+                <div class="studia-card p-5 border-emerald-900/30 bg-emerald-950/10">
+                    <p class="text-xs font-medium text-emerald-400 uppercase tracking-wide">TDEE Goal</p>
+                    <p id="stat-tdee" class="text-3xl font-bold text-white mt-1">--</p>
                 </div>
             </div>
 
-            <div id="tdee-view" class="hidden">
-                <div class="bg-gray-800 p-6 rounded-xl card mb-8">
-                    <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">TDEE Profile & Calculator</h2>
-                    <p class="text-sm text-gray-400 mb-4">Enter your metrics to calculate your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE).</p>
-                    
-                    <form id="profile-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        
+            <!-- Recent Activity Table -->
+            <div class="studia-card p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-white">Recent Workouts</h3>
+                    <button onclick="switchView('workouts')" class="text-sm text-emerald-400 hover:text-emerald-300">Log New +</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-zinc-400">
+                        <thead class="text-xs uppercase text-zinc-500 border-b border-zinc-800">
+                            <tr>
+                                <th class="pb-3 pl-2">Date</th>
+                                <th class="pb-3">Activity</th>
+                                <th class="pb-3">Sets x Reps</th>
+                                <th class="pb-3 text-right pr-2">Est. Burn</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-workout-list" class="divide-y divide-zinc-800">
+                            <!-- Injected JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- WORKOUTS VIEW -->
+        <div id="view-workouts" class="hidden space-y-6">
+            <div class="studia-card p-6 max-w-2xl mx-auto">
+                <h3 class="text-xl font-bold text-white mb-6">Log Workout</h3>
+                <form id="workout-form" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Activity Name</label>
+                            <input type="text" id="w-activity" class="studia-input" placeholder="e.g. Bench Press" required>
+                        </div>
                         <div>
-                            <label for="p-gender" class="block text-sm font-medium text-gray-400 mb-1">Gender</label>
-                            <select id="p-gender" required class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                                <option value="" disabled selected>Select Gender</option>
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Sets</label>
+                            <input type="number" id="w-sets" class="studia-input" placeholder="3" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Reps</label>
+                            <input type="number" id="w-reps" class="studia-input" placeholder="10" required>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Date</label>
+                            <input type="date" id="w-date" class="studia-input" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-white text-black font-bold py-3 rounded-lg hover:bg-zinc-200 transition mt-4">Save Entry</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- NUTRITION VIEW -->
+        <div id="view-nutrition" class="hidden space-y-6">
+            <div class="studia-card p-6 max-w-2xl mx-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-white">AI Nutrition Log</h3>
+                    <span class="text-xs bg-emerald-900 text-emerald-300 px-2 py-1 rounded">Gemini Powered</span>
+                </div>
+                
+                <form id="food-form" class="space-y-4">
+                     <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Food Item (Be specific)</label>
+                            <input type="text" id="f-item" class="studia-input" placeholder="e.g. 100g Chicken Breast" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Weight (g)</label>
+                            <input type="number" id="f-weight" class="studia-input" placeholder="100" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Date</label>
+                            <input type="date" id="f-date" class="studia-input" required>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Preview Box -->
+                    <div id="ai-preview-box" class="hidden bg-zinc-900 border border-zinc-800 p-4 rounded-lg mt-4">
+                        <p class="text-xs text-zinc-500 mb-2 uppercase tracking-wide">AI Estimation</p>
+                        <div class="flex justify-between text-sm">
+                            <div><span class="block text-xl font-bold text-white" id="disp-cals">0</span><span class="text-zinc-500">kcal</span></div>
+                            <div><span class="block text-xl font-bold text-white" id="disp-prot">0</span><span class="text-zinc-500">prot</span></div>
+                            <div><span class="block text-xl font-bold text-white" id="disp-fat">0</span><span class="text-zinc-500">fat</span></div>
+                            <div><span class="block text-xl font-bold text-white" id="disp-carb">0</span><span class="text-zinc-500">carb</span></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="f-submit-btn" class="w-full bg-white text-black font-bold py-3 rounded-lg hover:bg-zinc-200 transition">
+                        Get Estimate & Log
+                    </button>
+                </form>
+            </div>
+            
+            <div class="studia-card p-6">
+                <h3 class="text-lg font-bold text-white mb-4">Today's Meals</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-zinc-400">
+                        <thead class="text-xs uppercase text-zinc-500 border-b border-zinc-800">
+                            <tr>
+                                <th class="pb-3 pl-2">Item</th>
+                                <th class="pb-3 text-right">Cals</th>
+                                <th class="pb-3 text-right pr-2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nutrition-list" class="divide-y divide-zinc-800"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE VIEW -->
+        <div id="view-profile" class="hidden space-y-6">
+            <div class="studia-card p-6 max-w-2xl mx-auto">
+                <h3 class="text-xl font-bold text-white mb-6">TDEE Settings</h3>
+                <form id="profile-form" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Gender</label>
+                            <select id="p-gender" class="studia-input">
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                             </select>
                         </div>
-                        
                         <div>
-                            <label for="p-age" class="block text-sm font-medium text-gray-400 mb-1">Age (Years)</label>
-                            <input type="number" id="p-age" placeholder="25" required min="1"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Age</label>
+                            <input type="number" id="p-age" class="studia-input" placeholder="25">
                         </div>
-
                         <div>
-                            <label for="p-height" class="block text-sm font-medium text-gray-400 mb-1">Height (cm)</label>
-                            <input type="number" id="p-height" placeholder="175" required min="1"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Height (cm)</label>
+                            <input type="number" id="p-height" class="studia-input" placeholder="175">
                         </div>
-
                         <div>
-                            <label for="p-weight" class="block text-sm font-medium text-gray-400 mb-1">Weight (kg)</label>
-                            <input type="number" id="p-weight" placeholder="70" required min="1"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Weight (kg)</label>
+                            <input type="number" id="p-weight" class="studia-input" placeholder="70">
                         </div>
-
-                        <div class="lg:col-span-2">
-                            <label for="p-activity" class="block text-sm font-medium text-gray-400 mb-1">Activity Level</label>
-                            <select id="p-activity" required class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                                <option value="" disabled selected>Select Activity Level</option>
-                                <option value="1.2">Sedentary (little or no exercise)</option>
-                                <option value="1.375">Lightly active (light exercise 1-3 days/week)</option>
-                                <option value="1.55">Moderately active (moderate exercise 3-5 days/week)</option>
-                                <option value="1.725">Very active (hard exercise 6-7 days/week)</option>
-                                <option value="1.9">Extremely active (hard daily exercise + physical job)</option>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-zinc-400 mb-1">Activity Level</label>
+                            <select id="p-activity" class="studia-input">
+                                <option value="1.2">Sedentary</option>
+                                <option value="1.375">Light Activity</option>
+                                <option value="1.55">Moderate Activity</option>
+                                <option value="1.725">Very Active</option>
+                                <option value="1.9">Extremely Active</option>
                             </select>
                         </div>
-
-                        <div class="lg:col-span-3 mt-2">
-                            <button type="submit" id="p-submit-btn"
-                                    class="w-full bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-yellow-700 transition duration-150 ease-in-out">
-                                Save Profile & Calculate TDEE
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="mt-8 pt-4 border-t border-gray-700">
-                        <div id="tdee-results" class="space-y-3">
-                            <p class="text-xl font-semibold text-gray-200">
-                                BMR (Basal Metabolic Rate): <span id="display-bmr" class="text-green-400 font-bold">N/A</span> kcal
-                            </p>
-                            <p class="text-xl font-semibold text-gray-200">
-                                TDEE (Total Daily Energy Expenditure): <span id="display-tdee" class="text-yellow-400 font-bold">N/A</span> kcal
-                            </p>
-                            <div id="tdee-guidance" class="bg-gray-700 p-4 rounded-lg text-sm text-gray-300 hidden">
-                                <p><strong>Guidance:</strong></p>
-                                <p class="mt-2">Your TDEE is the estimated total number of calories you burn daily without exercise. Use this to help plan your fitness goals.</p>
-                                <ul class="list-disc list-inside mt-2 space-y-1">
-                                    <li>If your goal is **weight loss**, aim to burn more calories than you consume.</li>
-                                    <li>If your goal is **muscle gain**, aim to consume more protein and a slight caloric surplus.</li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
-                </div>
+                    <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition">Save & Calculate</button>
+                </form>
             </div>
+        </div>
 
-            <div id="custom-modal" class="fixed inset-0 bg-gray-900 bg-opacity-70 hidden items-center justify-center z-50">
-                <div class="bg-gray-800 rounded-lg p-6 w-11/12 max-w-sm shadow-2xl">
-                    <h3 id="modal-title" class="text-xl font-bold mb-4 text-gray-200">Alert</h3>
-                    <p id="modal-message" class="mb-6 text-gray-400"></p>
-                    <div class="flex justify-end space-x-3">
-                        <button id="modal-cancel-btn" class="px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition hidden">Cancel</button>
-                        <button id="modal-confirm-btn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">OK</button>
-                    </div>
-                </div>
+    </main>
+
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-6 w-96 shadow-2xl">
+            <h3 id="modal-title" class="text-lg font-bold text-white mb-2">Notification</h3>
+            <p id="modal-message" class="text-zinc-400 mb-6 text-sm"></p>
+            <div class="flex justify-end gap-3">
+                <button id="modal-cancel-btn" class="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg hover:bg-zinc-700 text-sm hidden">Cancel</button>
+                <button id="modal-confirm-btn" class="px-4 py-2 bg-white text-black rounded-lg hover:bg-zinc-200 text-sm font-bold">OK</button>
             </div>
         </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'healthTrackerState';
+        const STORAGE_KEY = 'studiaFitnessState';
+        const API_KEY = ""; // 
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+        
+        let state = { workouts: [], foods: [], profile: {} };
 
-        let state = {
-            workouts: [],
-            // 'foods' array removed
-            profile: {
-                age: null, gender: null, height: null, weight: null,
-                activity: null, bmr: null, tdee: null
+        // --- View Switching ---
+        window.switchView = (viewId) => {
+            // Hide all views
+            ['dashboard', 'workouts', 'nutrition', 'profile'].forEach(id => {
+                document.getElementById(`view-${id}`).classList.add('hidden');
+            });
+            // Show selected
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            
+            // Update Sidebar Active State
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(el => el.classList.remove('active', 'bg-zinc-800', 'text-white'));
+            // Find the clicked element (simplified logic for demo)
+            const activeIndex = ['dashboard', 'workouts', 'nutrition', 'profile'].indexOf(viewId);
+            if(navItems[activeIndex]) {
+                navItems[activeIndex].classList.add('active', 'bg-zinc-800', 'text-white');
             }
         };
-        let currentView = 'workout'; // Default view changed to 'workout'
 
-        // --- DOM Element Variables ---
-        const workoutForm = document.getElementById('workout-form');
-        // const foodForm = document.getElementById('food-form'); // Removed
-        const profileForm = document.getElementById('profile-form');
-
-        const wDateInput = document.getElementById('w-date');
-        const wActivityInput = document.getElementById('w-activity');
-        const wSetsInput = document.getElementById('w-sets');
-        const wRepsInput = document.getElementById('w-reps');
-        const wIdInput = document.getElementById('workout-id');
-        const wSubmitBtn = document.getElementById('w-submit-btn');
-
-        // Food-related variables removed
-
-        const workoutList = document.getElementById('workout-list');
-        // const foodList = document.getElementById('food-list'); // Removed
-        const wNoDataMessage = document.getElementById('w-no-data-message');
-
-
-        // TDEE Profile elements
-        const pGenderInput = document.getElementById('p-gender');
-        const pAgeInput = document.getElementById('p-age');
-        const pHeightInput = document.getElementById('p-height');
-        const pWeightInput = document.getElementById('p-weight');
-        const pActivityInput = document.getElementById('p-activity');
-        const displayBMR = document.getElementById('display-bmr');
-        const displayTDEE = document.getElementById('display-tdee');
-        const tdeeGuidance = document.getElementById('tdee-guidance');
-        // Removed guidance for maintain/loss/gain as they rely on consumed calories
-
-        // --- Utility Functions ---
-
-        function customModal(message, title = 'Notification', isConfirm = false) {
-            return new Promise(resolve => {
-                const modal = document.getElementById('custom-modal');
-                const modalTitle = document.getElementById('modal-title');
-                const modalMessage = document.getElementById('modal-message');
-                const modalConfirmBtn = document.getElementById('modal-confirm-btn');
-                const modalCancelBtn = document.getElementById('modal-cancel-btn');
-
-                modalTitle.textContent = title;
-                modalMessage.textContent = message;
-
-                // Click handlers
-                const handleCancel = () => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                    modalConfirmBtn.removeEventListener('click', handleConfirm);
-                    modalCancelBtn.removeEventListener('click', handleCancel);
-                    resolve(false);
-                };
-                const handleConfirm = () => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                    modalConfirmBtn.removeEventListener('click', handleConfirm);
-                    modalCancelBtn.removeEventListener('click', handleCancel);
-                    resolve(true);
-                };
-
-                // Remove old listeners before adding new ones
-                modalConfirmBtn.replaceWith(modalConfirmBtn.cloneNode(true));
-                modalCancelBtn.replaceWith(modalCancelBtn.cloneNode(true));
-                document.getElementById('modal-confirm-btn').addEventListener('click', handleConfirm);
-                document.getElementById('modal-cancel-btn').addEventListener('click', handleCancel);
-
-
-                if (isConfirm) {
-                    document.getElementById('modal-cancel-btn').classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').textContent = 'Confirm Delete';
-                    document.getElementById('modal-confirm-btn').classList.remove('bg-green-600', 'hover:bg-green-700');
-                    document.getElementById('modal-confirm-btn').classList.add('bg-red-600', 'hover:bg-red-700');
-                } else {
-                    document.getElementById('modal-cancel-btn').classList.add('hidden');
-                    document.getElementById('modal-confirm-btn').textContent = 'OK';
-                    document.getElementById('modal-confirm-btn').classList.add('bg-green-600', 'hover:bg-green-700');
-                    document.getElementById('modal-confirm-btn').classList.remove('bg-red-600', 'hover:bg-red-700');
-                }
-
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            });
+        // --- Data Handling ---
+        function loadData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) state = JSON.parse(data);
+            updateUI();
+        }
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            updateUI();
         }
 
-        function saveState() {
-            try {
-                const dataToSave = {
-                    workouts: state.workouts,
-                    // foods: state.foods, // Removed
-                    profile: state.profile
-                };
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-            } catch (error) {
-                console.error("Error saving state to localStorage:", error);
-            }
-        }
+        // --- UI Updates ---
+        function updateUI() {
+            // Stats
+            const burned = state.workouts.reduce((sum, w) => sum + Math.round(w.sets * w.reps * 1.5), 0);
+            const consumed = state.foods.reduce((sum, f) => sum + (f.calories || 0), 0);
+            const tdee = state.profile.tdee || 0;
+            const balance = (tdee + burned) - consumed;
 
-        function loadState() {
-            try {
-                const storedState = localStorage.getItem(STORAGE_KEY);
-                if (storedState) {
-                    const loadedState = JSON.parse(storedState);
-                    state.workouts = loadedState.workouts || [];
-                    // state.foods = loadedState.foods || []; // Removed
-                    state.profile = loadedState.profile || state.profile;
-                }
-                // Set current date on initial load
-                const today = new Date().toISOString().split('T')[0];
-                if (!wDateInput.value) wDateInput.value = today;
-                // if (!fDateInput.value) fDateInput.value = today; // Removed
-
-                updateStats();
-                renderWorkouts();
-                // renderFoods(); // Removed
-                renderProfile();
-
-            } catch (error) {
-                console.error("Error loading state from localStorage:", error);
-                // Set defaults even if load fails
-                const today = new Date().toISOString().split('T')[0];
-                if (!wDateInput.value) wDateInput.value = today;
-            }
-        }
-
-        // --- Core Application Logic ---
-
-        function updateStats() {
-            const totalWorkouts = state.workouts.length;
-            const totalBurned = state.workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
+            document.getElementById('stat-burned').textContent = burned.toLocaleString();
+            document.getElementById('stat-consumed').textContent = consumed.toLocaleString();
+            document.getElementById('stat-tdee').textContent = tdee ? tdee.toLocaleString() : '--';
+            document.getElementById('stat-balance').textContent = tdee ? balance.toLocaleString() : '--';
             
-            // Consumed Calories, Protein, and Calorie Balance calculations removed
+            const balDesc = document.getElementById('stat-balance-desc');
+            if(tdee) {
+                if(balance < -200) { balDesc.textContent = "Deficit (Losing)"; balDesc.className = "text-xs text-red-400 mt-1"; }
+                else if(balance > 200) { balDesc.textContent = "Surplus (Gaining)"; balDesc.className = "text-xs text-emerald-400 mt-1"; }
+                else { balDesc.textContent = "Maintenance"; balDesc.className = "text-xs text-zinc-500 mt-1"; }
+            }
+
+            // Dashboard Table
+            const dbList = document.getElementById('dashboard-workout-list');
+            dbList.innerHTML = state.workouts.slice(-5).reverse().map(w => `
+                <tr>
+                    <td class="py-3 pl-2">${w.date}</td>
+                    <td class="py-3 font-medium text-white">${w.activity}</td>
+                    <td class="py-3">${w.sets} x ${w.reps}</td>
+                    <td class="py-3 text-right pr-2 text-zinc-300">${Math.round(w.sets*w.reps*1.5)}</td>
+                </tr>
+            `).join('');
+
+            // Nutrition List
+            const nutList = document.getElementById('nutrition-list');
+            nutList.innerHTML = state.foods.slice(-10).reverse().map(f => `
+                <tr>
+                    <td class="py-3 pl-2 font-medium text-white">${f.item} <span class="text-xs text-zinc-500">(${f.weight}g)</span></td>
+                    <td class="py-3 text-right text-white">${f.calories}</td>
+                    <td class="py-3 text-right pr-2"><button onclick="deleteFood('${f.id}')" class="text-xs text-red-500 hover:text-red-400">Del</button></td>
+                </tr>
+            `).join('');
             
-            document.getElementById('stat-total-workouts').textContent = totalWorkouts;
-            document.getElementById('stat-total-burned').textContent = totalBurned.toFixed(0);
-
-            document.getElementById('stat-tdee').textContent = state.profile.tdee ? state.profile.tdee.toFixed(0) : 'N/A';
+            // Profile Inputs
+            if(state.profile.gender) document.getElementById('p-gender').value = state.profile.gender;
+            if(state.profile.age) document.getElementById('p-age').value = state.profile.age;
+            if(state.profile.height) document.getElementById('p-height').value = state.profile.height;
+            if(state.profile.weight) document.getElementById('p-weight').value = state.profile.weight;
+            if(state.profile.activity) document.getElementById('p-activity').value = state.profile.activity;
         }
 
-        function switchView(view) {
-            document.getElementById('workout-view').classList.add('hidden');
-            // document.getElementById('nutrition-view').classList.add('hidden'); // Removed
-            document.getElementById('tdee-view').classList.add('hidden');
-
-            document.getElementById(`${view}-view`).classList.remove('hidden');
-
-            document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.tab[onclick="switchView('${view}')"]`).classList.add('active');
-
-            currentView = view;
+        // --- AI Logic ---
+        async function getCaloriesFromLLM(item, weight) {
+            const prompt = `Estimate nutrition for ${weight}g of ${item}. Return ONLY JSON: {"calories": int, "protein": int, "fat": int, "carbs": int}. Round to int.`;
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const data = await res.json();
+                const text = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
+                return JSON.parse(text);
+            } catch (e) {
+                console.error(e);
+                return null;
+            }
         }
 
-        // --- Workout Logic ---
-
-        function logWorkout(e) {
+        // --- Event Listeners ---
+        
+        // Workout Submit
+        document.getElementById('workout-form').addEventListener('submit', (e) => {
             e.preventDefault();
-
-            const date = wDateInput.value;
-            const activity = wActivityInput.value.trim();
-            const sets = parseInt(wSetsInput.value);
-            const reps = parseInt(wRepsInput.value);
-            const id = wIdInput.value;
-
-            if (!date || !activity || !sets || !reps) {
-                customModal('Please fill in all workout fields.', 'Input Error');
-                return;
-            }
-
-            // Calculation: (Total Reps) * 1.5 kcal
-            const caloriesBurned = (sets * reps) * 1.5;
-
-            if (id) {
-                // Update existing workout
-                const index = state.workouts.findIndex(w => w.id === id);
-                if (index !== -1) {
-                    state.workouts[index] = { ...state.workouts[index], date, activity, sets, reps, caloriesBurned };
-                }
-            } else {
-                // Add new workout
-                const newWorkout = {
-                    id: `w-${new Date().getTime()}`,
-                    date,
-                    activity,
-                    sets,
-                    reps,
-                    caloriesBurned
-                };
-                state.workouts.push(newWorkout);
-            }
-
-            saveState();
-            updateStats();
-            renderWorkouts();
-            workoutForm.reset();
-            wIdInput.value = '';
-            wSubmitBtn.textContent = 'Add Workout';
-            wDateInput.value = new Date().toISOString().split('T')[0]; // Reset date to today
-        }
-
-        function renderWorkouts() {
-            workoutList.innerHTML = ''; // Clear existing list
-
-            if (state.workouts.length === 0) {
-                wNoDataMessage.classList.remove('hidden');
-                return;
-            }
-
-            wNoDataMessage.classList.add('hidden');
-
-            const sortedWorkouts = [...state.workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            sortedWorkouts.forEach(w => {
-                const row = document.createElement('tr');
-                row.className = 'data-row';
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">${w.activity}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.sets}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.reps}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-400">${w.caloriesBurned.toFixed(0)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
-                        <button onclick="editWorkout('${w.id}')" class="text-blue-400 hover:text-blue-300 transition">Edit</button>
-                        <button onclick="deleteWorkout('${w.id}')" class="text-red-400 hover:text-red-300 transition">Delete</button>
-                    </td>
-                `;
-                workoutList.appendChild(row);
+            state.workouts.push({
+                id: crypto.randomUUID(),
+                date: document.getElementById('w-date').value,
+                activity: document.getElementById('w-activity').value,
+                sets: parseInt(document.getElementById('w-sets').value),
+                reps: parseInt(document.getElementById('w-reps').value)
             });
-        }
-
-        function editWorkout(id) {
-            const workout = state.workouts.find(w => w.id === id);
-            if (workout) {
-                wIdInput.value = workout.id;
-                wDateInput.value = workout.date;
-                wActivityInput.value = workout.activity;
-                wSetsInput.value = workout.sets;
-                wRepsInput.value = workout.reps;
-                wSubmitBtn.textContent = 'Update Workout';
-                window.scrollTo(0, 0); // Scroll to top
-            }
-        }
-
-        async function deleteWorkout(id) {
-            const confirmed = await customModal('Are you sure you want to delete this workout?', 'Confirm Delete', true);
-            if (confirmed) {
-                state.workouts = state.workouts.filter(w => w.id !== id);
-                saveState();
-                updateStats();
-                renderWorkouts();
-            }
-        }
-
-        // Nutrition functions (logFood, renderFoods, editFood, deleteFood) removed
-
-        // --- TDEE/Profile Logic ---
-
-        function saveProfile(e) {
-            e.preventDefault();
-
-            const gender = pGenderInput.value;
-            const age = parseInt(pAgeInput.value);
-            const height = parseInt(pHeightInput.value);
-            const weight = parseInt(pWeightInput.value);
-            const activity = parseFloat(pActivityInput.value);
-
-            if (!gender || !age || !height || !weight || !activity) {
-                customModal('Please fill in all profile fields.', 'Input Error');
-                return;
-            }
-
-            // Calculate BMR using Mifflin-St Jeor formula
-            let bmr;
-            if (gender === 'male') {
-                bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-            } else {
-                bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
-            }
-
-            const tdee = bmr * activity;
-
-            // Save to state
-            state.profile = { gender, age, height, weight, activity, bmr, tdee };
-
-            saveState();
-            renderProfile(); // Update the display
-            updateStats(); // Update the main dashboard stats
-            customModal('Profile and TDEE calculation saved!', 'Profile Updated');
-        }
-
-        function renderProfile() {
-            const { gender, age, height, weight, activity, bmr, tdee } = state.profile;
-
-            if (gender) pGenderInput.value = gender;
-            if (age) pAgeInput.value = age;
-            if (height) pHeightInput.value = height;
-            if (weight) pWeightInput.value = weight;
-            if (activity) pActivityInput.value = activity;
-
-            if (bmr && tdee) {
-                displayBMR.textContent = bmr.toFixed(0);
-                displayTDEE.textContent = tdee.toFixed(0);
-                tdeeGuidance.classList.remove('hidden');
-            } else {
-                displayBMR.textContent = 'N/A';
-                displayTDEE.textContent = 'N/A';
-                tdeeGuidance.classList.add('hidden');
-            }
-        }
-
-
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load saved state
-            loadState();
-
-            // Attach event listeners
-            workoutForm.addEventListener('submit', logWorkout);
-            // foodForm.addEventListener('submit', logFood); // Removed
-            profileForm.addEventListener('submit', saveProfile);
-
-            // Set initial view
-            switchView(currentView);
+            saveData();
+            e.target.reset();
+            document.getElementById('w-date').value = new Date().toISOString().split('T')[0];
+            showModal("Workout Logged Successfully!");
         });
-    </script>
 
+        // Food Submit
+        document.getElementById('food-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('f-submit-btn');
+            const item = document.getElementById('f-item').value;
+            const weight = document.getElementById('f-weight').value;
+            
+            btn.textContent = "AI Estimating...";
+            btn.disabled = true;
+
+            const macros = await getCaloriesFromLLM(item, weight);
+            
+            if(macros) {
+                // Show Preview
+                document.getElementById('ai-preview-box').classList.remove('hidden');
+                document.getElementById('disp-cals').textContent = macros.calories;
+                document.getElementById('disp-prot').textContent = macros.protein;
+                document.getElementById('disp-fat').textContent = macros.fat;
+                document.getElementById('disp-carb').textContent = macros.carbs;
+                
+                // Save
+                state.foods.push({
+                    id: crypto.randomUUID(),
+                    date: document.getElementById('f-date').value,
+                    item, weight, ...macros
+                });
+                saveData();
+                e.target.reset();
+                document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+                btn.textContent = "Logged! Add Another";
+            } else {
+                showModal("AI Error. Please try again.", "Error");
+            }
+            btn.disabled = false;
+        });
+        
+        // Profile Submit
+        document.getElementById('profile-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const w = parseFloat(document.getElementById('p-weight').value);
+            const h = parseFloat(document.getElementById('p-height').value);
+            const a = parseFloat(document.getElementById('p-age').value);
+            const g = document.getElementById('p-gender').value;
+            const act = parseFloat(document.getElementById('p-activity').value);
+            
+            let bmr = (10 * w) + (6.25 * h) - (5 * a) + (g === 'male' ? 5 : -161);
+            let tdee = Math.round(bmr * act);
+            
+            state.profile = { gender: g, age: a, height: h, weight: w, activity: act, tdee };
+            saveData();
+            showModal(`TDEE Updated: ${tdee} kcal/day`);
+        });
+
+        // Delete Functions
+        window.deleteFood = (id) => {
+            if(confirm("Delete this item?")) {
+                state.foods = state.foods.filter(f => f.id !== id);
+                saveData();
+            }
+        };
+
+        // Modal Logic
+        function showModal(msg, title="Success") {
+            const m = document.getElementById('custom-modal');
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = msg;
+            document.getElementById('modal-cancel-btn').classList.add('hidden');
+            document.getElementById('modal-confirm-btn').onclick = () => m.classList.add('hidden');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        // Init
+        document.getElementById('w-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+        loadData();
+    </script>
 </body>
 </html>
