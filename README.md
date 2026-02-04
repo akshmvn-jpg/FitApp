@@ -1,233 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FitTrack AI | Midnight Edition</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DesiFit AI | Indian Diet Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 
-<script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #020617; /* Slate 950 */
+            color: #e2e8f0;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+        }
+        .nav-btn.active {
+            background: rgba(14, 165, 233, 0.15);
+            color: #38bdf8;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
-
-body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background:#020617;
-    color:#f1f5f9;
-}
-
-.glass-card {
-    background:rgba(15,23,42,.85);
-    border:1px solid rgba(56,189,248,.15);
-    border-radius:1.25rem;
-    backdrop-filter:blur(12px);
-}
-
-.nav-item {
-    padding:.8rem 1rem;
-    border-radius:.75rem;
-    color:#94a3b8;
-    cursor:pointer;
-}
-
-.nav-item.active, .nav-item:hover {
-    background:rgba(56,189,248,.15);
-    color:#38bdf8;
-}
-
-.input-field {
-    width:100%;
-    padding:.75rem;
-    border-radius:.75rem;
-    background:#0f172a;
-    border:1px solid #1e293b;
-    color:white;
-}
-
-.input-field:focus {
-    outline:none;
-    border-color:#38bdf8;
-}
-
-.blue-gradient {
-    background:linear-gradient(135deg,#38bdf8,#1d4ed8);
-}
-</style>
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+    </style>
 </head>
+<body class="flex h-screen overflow-hidden selection:bg-blue-500 selection:text-white">
 
-<body class="flex h-screen overflow-hidden">
-
-<!-- SIDEBAR -->
-<aside class="w-72 bg-slate-950 border-r border-slate-900 hidden md:flex flex-col p-6">
-    <h1 class="text-xl font-bold mb-8">FitTrack <span class="text-blue-400">AI</span></h1>
-
-    <nav class="space-y-2 flex-1">
-        <div class="nav-item active" onclick="switchView('dashboard',this)">Dashboard</div>
-        <div class="nav-item" onclick="switchView('workouts',this)">Workouts</div>
-        <div class="nav-item" onclick="switchView('nutrition',this)">Nutrition</div>
-        <div class="nav-item" onclick="switchView('profile',this)">TDEE Calc</div>
-    </nav>
-</aside>
-
-<!-- MAIN -->
-<main class="flex-1 overflow-y-auto p-6 md:p-10">
-
-<!-- DASHBOARD -->
-<section id="view-dashboard" class="space-y-8">
-    <h2 class="text-3xl font-bold">Your Stats</h2>
-
-    <div class="grid md:grid-cols-3 gap-6">
-        <div class="glass-card p-6">
-            <p class="text-sm text-slate-400">Burned</p>
-            <p id="stat-burned" class="text-4xl font-bold">0</p>
-        </div>
-
-        <div class="glass-card p-6">
-            <p class="text-sm text-slate-400">Consumed</p>
-            <p id="stat-consumed" class="text-4xl font-bold">0</p>
-        </div>
-
-        <div class="glass-card p-6 border-blue-400/40">
-            <p class="text-sm text-blue-400">Net Balance</p>
-            <p id="stat-balance" class="text-4xl font-bold">--</p>
-            <p id="stat-balance-desc" class="text-xs text-slate-500"></p>
-        </div>
-    </div>
-
-    <div class="glass-card p-6">
-        <h3 class="font-bold mb-4">Recent Activity</h3>
-        <div id="activity-list" class="space-y-3 text-sm text-slate-400">
-            No activity yet.
-        </div>
-    </div>
-</section>
-
-<!-- WORKOUTS -->
-<section id="view-workouts" class="hidden max-w-xl mx-auto">
-    <div class="glass-card p-8">
-        <h3 class="text-xl font-bold mb-4">Log Workout</h3>
-        <form id="workout-form" class="space-y-4">
-            <input id="w-name" class="input-field" placeholder="Exercise" required>
-            <div class="grid grid-cols-2 gap-4">
-                <input id="w-sets" type="number" class="input-field" placeholder="Sets" required>
-                <input id="w-reps" type="number" class="input-field" placeholder="Reps" required>
+    <aside class="w-64 bg-slate-950 border-r border-slate-900 hidden md:flex flex-col p-6">
+        <div class="flex items-center gap-3 mb-8">
+            <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-900/50">
+                <span class="text-xl font-bold text-white">ॐ</span>
             </div>
-            <button class="w-full blue-gradient py-3 rounded-xl font-bold">Save Workout</button>
-        </form>
-    </div>
-</section>
-
-<!-- NUTRITION -->
-<section id="view-nutrition" class="hidden max-w-xl mx-auto">
-    <div class="glass-card p-8">
-        <h3 class="text-xl font-bold mb-4">AI Nutrition Log</h3>
-        <form id="food-form" class="space-y-4">
-            <input id="f-item" class="input-field" placeholder="What did you eat?" required>
-            <button class="w-full bg-cyan-400 text-slate-950 py-3 rounded-xl font-bold">Analyze</button>
-        </form>
-        <div id="ai-result" class="hidden mt-4 p-4 bg-slate-950 rounded-xl border border-slate-800"></div>
-    </div>
-</section>
-
-<!-- TDEE -->
-<section id="view-profile" class="hidden max-w-xl mx-auto">
-    <div class="glass-card p-8">
-        <h3 class="text-xl font-bold mb-4">TDEE Calculator</h3>
-        <form id="tdee-form" class="space-y-4">
-            <select id="t-gender" class="input-field">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-            </select>
-            <div class="grid grid-cols-3 gap-4">
-                <input id="t-age" type="number" class="input-field" placeholder="Age" required>
-                <input id="t-height" type="number" class="input-field" placeholder="Height cm" required>
-                <input id="t-weight" type="number" class="input-field" placeholder="Weight kg" required>
+            <div>
+                <h1 class="font-bold text-lg text-white">DesiFit <span class="text-blue-400">AI</span></h1>
             </div>
-            <select id="t-activity" class="input-field">
-                <option value="1.2">Sedentary</option>
-                <option value="1.55">Moderate</option>
-                <option value="1.9">Very Active</option>
-            </select>
-            <button class="w-full blue-gradient py-3 rounded-xl font-bold">Calculate</button>
-        </form>
-    </div>
-</section>
+        </div>
+        <nav class="space-y-2 flex-1">
+            <div id="btn-dashboard" class="nav-btn p-3 rounded-xl cursor-pointer flex gap-3 text-slate-400 hover:text-white" onclick="switchTab('dashboard')">📊 Dashboard</div>
+            <div id="btn-calculator" class="nav-btn p-3 rounded-xl cursor-pointer flex gap-3 text-slate-400 hover:text-white" onclick="switchTab('calculator')">🧮 TDEE Calc</div>
+            <div id="btn-foodlog" class="nav-btn p-3 rounded-xl cursor-pointer flex gap-3 text-slate-400 hover:text-white active" onclick="switchTab('foodlog')">🍛 Food Log</div>
+        </nav>
+        
+        <div class="mt-auto glass-panel p-2 flex items-center justify-center min-h-[150px]">
+            <span class="text-[10px] text-slate-600 uppercase">Ad Space</span>
+        </div>
+    </aside>
 
-</main>
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 relative">
+        
+        <div class="w-full h-20 glass-panel mb-6 flex items-center justify-center overflow-hidden">
+            <span class="text-[10px] text-slate-600 uppercase">Banner Ad</span>
+        </div>
 
-<script>
-const foodDB={
- egg:{cals:70,alt:"Paneer / Tofu"},
- rice:{cals:130,alt:"Brown rice / Millets"},
- paratha:{cals:220,alt:"Roti without oil"},
- milk:{cals:60,alt:"Low-fat milk / curd"}
-};
+        <div id="tab-dashboard" class="hidden space-y-6">
+            <div class="flex justify-between items-end">
+                <h2 class="text-3xl font-bold text-white">Your Progress</h2>
+                <div id="status-container">
+                    <span id="status-badge" class="status-pill bg-slate-800 text-slate-400">Calculate TDEE First</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-panel p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <p class="text-slate-400">Daily Calorie Budget</p>
+                        <span id="tdee-val" class="text-xs font-bold text-blue-400 bg-blue-400/10 px-2 py-1 rounded">Target: 0</span>
+                    </div>
+                    <p id="dash-cals" class="text-5xl font-bold text-white mt-2">0</p>
+                    <p id="diff-msg" class="text-sm mt-2 text-slate-500">Log food to see difference</p>
+                </div>
 
-let state=JSON.parse(localStorage.getItem("fittrack"))||{workouts:[],foods:[],tdee:0};
+                <div class="glass-panel p-6 flex flex-col justify-center">
+                    <p class="text-slate-400 mb-4">Macronutrient Breakdown</p>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1"><span>Carbs</span><span id="dash-c">0g</span></div>
+                            <div class="w-full bg-slate-800 h-1.5 rounded-full"><div id="bar-c" class="bg-orange-400 h-full rounded-full w-0 transition-all"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1"><span>Protein</span><span id="dash-p">0g</span></div>
+                            <div class="w-full bg-slate-800 h-1.5 rounded-full"><div id="bar-p" class="bg-blue-400 h-full rounded-full w-0 transition-all"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1"><span>Fats</span><span id="dash-f">0g</span></div>
+                            <div class="w-full bg-slate-800 h-1.5 rounded-full"><div id="bar-f" class="bg-yellow-400 h-full rounded-full w-0 transition-all"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-function switchView(view,el){
-["dashboard","workouts","nutrition","profile"].forEach(v=>{
-document.getElementById("view-"+v).classList.add("hidden");
-});
-document.getElementById("view-"+view).classList.remove("hidden");
-document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
-el.classList.add("active");
-}
+            <div class="glass-panel p-6">
+                <h3 class="font-bold mb-4">Today's Thali (Log)</h3>
+                <div id="log-list" class="space-y-2 text-sm text-slate-400">
+                    <p class="italic text-slate-600 text-center py-4">No items added today.</p>
+                </div>
+            </div>
+        </div>
 
-function updateDashboard(){
-const burned=state.workouts.length*120;
-const consumed=state.foods.reduce((s,f)=>s+f.cals,0);
+        <div id="tab-calculator" class="hidden space-y-6 max-w-xl mx-auto">
+            <div class="glass-panel p-8">
+                <h2 class="text-2xl font-bold text-white mb-4">TDEE Calculator</h2>
+                <form id="tdee-form" class="space-y-4" onsubmit="calculateTDEE(event)">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-500 mb-1 ml-1 uppercase">Gender</label>
+                            <select id="gender" class="w-full bg-slate-900 p-3 rounded-xl text-white outline-none border border-slate-800">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-500 mb-1 ml-1 uppercase">Age</label>
+                            <input type="number" id="age" required class="w-full bg-slate-900 p-3 rounded-xl text-white outline-none border border-slate-800" placeholder="25">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-500 mb-1 ml-1 uppercase">Height (cm)</label>
+                            <input type="number" id="height" required class="w-full bg-slate-900 p-3 rounded-xl text-white outline-none border border-slate-800" placeholder="175">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-500 mb-1 ml-1 uppercase">Weight (kg)</label>
+                            <input type="number" id="weight" required class="w-full bg-slate-900 p-3 rounded-xl text-white outline-none border border-slate-800" placeholder="70">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-1 ml-1 uppercase">Activity Level</label>
+                        <select id="activity" class="w-full bg-slate-900 p-3 rounded-xl text-white outline-none border border-slate-800">
+                            <option value="1.2">Sedentary (Office job)</option>
+                            <option value="1.375">Light Activity (Exercise 1-3 days/week)</option>
+                            <option value="1.55">Moderate Activity (Exercise 3-5 days/week)</option>
+                            <option value="1.725">High Activity (Daily intense exercise)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 p-4 rounded-xl font-bold text-white shadow-lg shadow-blue-900/40 hover:bg-blue-500 transition">Save & Calculate Goal</button>
+                </form>
+            </div>
+        </div>
 
-stat-burned.textContent=burned;
-stat-consumed.textContent=consumed;
+        <div id="tab-foodlog" class="space-y-6 max-w-2xl mx-auto">
+            <div class="glass-panel p-8">
+                <h2 class="text-2xl font-bold text-white mb-6">Log Indian Meal</h2>
 
-if(state.tdee){
-stat-balance.textContent=(state.tdee+burned)-consumed;
-stat-balance-desc.textContent=`Target ${state.tdee} kcal`;
-}
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 mb-4">
+                    <label class="block text-xs text-blue-400 font-bold mb-2 uppercase tracking-wide">Select Item</label>
+                    <select id="quick-food" class="w-full bg-slate-950 p-3 rounded-lg text-white outline-none border border-slate-700 focus:border-blue-500 transition" onchange="updateInputFields()">
+                        <option value="">-- Choose Food --</option>
+                        <optgroup label="Breads & Staples (Count)">
+                            <option value='{"name":"Roti (Whole Wheat)","cals":104,"p":3,"c":20,"f":1,"unit":"pcs"}'>Roti / Chapati</option>
+                            <option value='{"name":"Puri","cals":101,"p":2,"c":12,"f":5,"unit":"pcs"}'>Puri (Fried)</option>
+                            <option value='{"name":"Idli","cals":39,"p":1,"c":8,"f":0,"unit":"pcs"}'>Idli</option>
+                            <option value='{"name":"Samosa","cals":260,"p":4,"c":24,"f":17,"unit":"pcs"}'>Samosa</option>
+                        </optgroup>
+                        <optgroup label="Curries & Dals (Bowls)">
+                            <option value='{"name":"Dal Tadka","cals":150,"p":7,"c":18,"f":6,"unit":"bowl"}'>Dal Tadka (1 Katori)</option>
+                            <option value='{"name":"Paneer Butter Masala","cals":350,"p":12,"c":15,"f":25,"unit":"bowl"}'>Paneer Butter Masala</option>
+                            <option value='{"name":"Rice (Cooked)","cals":130,"p":2,"c":28,"f":0.5,"unit":"bowl"}'>White Rice (1 Katori)</option>
+                        </optgroup>
+                        <optgroup label="Cooking Fats (Spoons)">
+                            <option value='{"name":"Ghee","cals":45,"p":0,"c":0,"f":5,"unit":"tsp"}'>Desi Ghee (Teaspoon)</option>
+                        </optgroup>
+                    </select>
+                </div>
 
-activity-list.innerHTML=state.workouts.concat(state.foods).slice(-5).reverse().map(i=>
-`<div class="flex justify-between">
-<span>${i.name||i.item}</span>
-<span class="text-blue-400">${i.sets?`${i.sets}x${i.reps}`:`${i.cals} kcal`}</span>
-</div>`
-).join("")||"No activity yet.";
+                <div class="grid grid-cols-5 gap-3 mb-4">
+                    <div class="col-span-2">
+                        <label id="qty-label" class="block text-xs text-slate-500 mb-1 ml-1">Quantity</label>
+                        <div class="relative">
+                            <input type="number" id="input-qty" class="w-full bg-slate-900 p-3 rounded-xl text-white outline-none border border-slate-800" value="1" oninput="calculatePreview()">
+                            <span id="unit-display" class="absolute right-3 top-3 text-xs text-slate-500 font-bold uppercase">--</span>
+                        </div>
+                    </div>
+                    <div class="col-span-2">
+                         <label class="block text-xs text-slate-500 mb-1 ml-1">Est. Weight (g)</label>
+                         <input type="number" id="input-grams" class="w-full bg-slate-900 p-3 rounded-xl text-slate-400 border border-slate-800" readonly>
+                    </div>
+                    <div class="col-span-1 flex items-end">
+                        <button onclick="addFood()" class="w-full h-[50px] bg-blue-600 rounded-xl text-white font-bold text-2xl shadow-lg shadow-blue-900/50 hover:bg-blue-500 transition">+</button>
+                    </div>
+                </div>
 
-localStorage.setItem("fittrack",JSON.stringify(state));
-}
+                <div class="flex justify-between items-center text-sm p-3 bg-slate-900/50 rounded-lg border border-slate-800/50">
+                    <span class="text-slate-400">Preview:</span>
+                    <span class="text-white font-mono"><span id="preview-cals" class="text-xl font-bold text-blue-400">0</span> kcal</span>
+                </div>
 
-workout-form.onsubmit=e=>{
-e.preventDefault();
-state.workouts.push({name:w-name.value,sets:w-sets.value,reps:w-reps.value});
-updateDashboard();
-e.target.reset();
-};
+                <div id="ai-box" class="hidden mt-4 p-4 rounded-xl bg-yellow-900/10 border border-yellow-500/20">
+                    <p id="ai-msg" class="text-yellow-200 text-xs italic"></p>
+                </div>
+            </div>
+        </div>
+    </main>
 
-food-form.onsubmit=e=>{
-e.preventDefault();
-let text=f-item.value.toLowerCase();
-let found=Object.keys(foodDB).find(f=>text.includes(f));
-let cals=found?foodDB[found].cals:200;
-let alt=found?foodDB[found].alt:"Whole foods";
+    <script>
+        // Load stored data or default
+        let state = JSON.parse(localStorage.getItem('desiFitState')) || { 
+            log: [], 
+            tdee: 0,
+            user: { weight: 0, height: 0, age: 0, gender: 'male', activity: 1.2 }
+        };
 
-state.foods.push({item:f-item.value,cals});
-ai-result.classList.remove("hidden");
-ai-result.innerHTML=`<p class="font-bold">${cals} kcal</p><p class="text-slate-400">Better: <span class="text-cyan-400">${alt}</span></p>`;
-updateDashboard();
-e.target.reset();
-};
+        let currentSelection = null;
 
-tdee-form.onsubmit=e=>{
-e.preventDefault();
-let w=+t-weight.value,h=+t-height.value,a=+t-age.value;
-let g=t-gender.value,act=+t-activity.value;
-let bmr=g==="male"?(10*w+6.25*h-5*a+5):(10*w+6.25*h-5*a-161);
-state.tdee=Math.round(bmr*act);
-updateDashboard();
-};
+        function switchTab(id) {
+            ['dashboard', 'calculator', 'foodlog'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`btn-${t}`).classList.remove('active');
+            });
+            document.getElementById(`tab-${id}`).classList.remove('hidden');
+            document.getElementById(`btn-${id}`).classList.add('active');
+            if (id === 'dashboard') updateDashboard();
+        }
 
-updateDashboard();
-</script>
+        function calculateTDEE(e) {
+            e.preventDefault();
+            const g = document.getElementById('gender').value;
+            const a = parseInt(document.getElementById('age').value);
+            const h = parseInt(document.getElementById('height').value);
+            const w = parseInt(document.getElementById('weight').value);
+            const act = parseFloat(document.getElementById('activity').value);
 
+            // Mifflin-St Jeor Equation
+            let bmr = (10 * w) + (6.25 * h) - (5 * a);
+            bmr += (g === 'male') ? 5 : -161;
+            
+            state.tdee = Math.round(bmr * act);
+            state.user = { weight: w, height: h, age: a, gender: g, activity: act };
+            
+            saveAndSync();
+            alert("Daily Goal Set to: " + state.tdee + " kcal");
+            switchTab('dashboard');
+        }
+
+        function updateInputFields() {
+            const select = document.getElementById('quick-food');
+            if (!select.value) return;
+
+            currentSelection = JSON.parse(select.value);
+            document.getElementById('qty-label').textContent = currentSelection.unit === 'pcs' ? "How many pieces?" : "How many bowls?";
+            document.getElementById('unit-display').textContent = currentSelection.unit;
+            document.getElementById('input-qty').value = 1;
+            calculatePreview();
+        }
+
+        function calculatePreview() {
+            if (!currentSelection) return;
+            const qty = parseFloat(document.getElementById('input-qty').value) || 0;
+            document.getElementById('preview-cals').textContent = Math.round(currentSelection.cals * qty);
+            
+            let weightFactor = currentSelection.unit === 'pcs' ? 45 : (currentSelection.unit === 'tsp' ? 5 : 150);
+            document.getElementById('input-grams').value = Math.round(qty * weightFactor);
+        }
+
+        function addFood() {
+            if (!currentSelection) return;
+            const qty = parseFloat(document.getElementById('input-qty').value) || 0;
+            
+            state.log.push({
+                name: currentSelection.name,
+                qty: qty,
+                unit: currentSelection.unit,
+                cals: Math.round(currentSelection.cals * qty),
+                p: Math.round(currentSelection.p * qty),
+                c: Math.round(currentSelection.c * qty),
+                f: Math.round(currentSelection.f * qty)
+            });
+
+            saveAndSync();
+            alert("Added to log!");
+            switchTab('dashboard');
+        }
+
+        function updateDashboard() {
+            const totals = state.log.reduce((acc, curr) => {
+                acc.cals += curr.cals; acc.p += curr.p; acc.c += curr.c; acc.f += curr.f;
+                return acc;
+            }, {cals:0, p:0, c:0, f:0});
+
+            document.getElementById('dash-cals').textContent = totals.cals;
+            document.getElementById('dash-p').textContent = totals.p + 'g';
+            document.getElementById('dash-c').textContent = totals.c + 'g';
+            document.getElementById('dash-f').textContent = totals.f + 'g';
+            document.getElementById('tdee-val').textContent = "Goal: " + state.tdee;
+
+            // Update Progress Bars
+            if (state.tdee > 0) {
+                const targetP = Math.round(state.user.weight * 1.5); // 1.5g per kg
+                document.getElementById('bar-p').style.width = Math.min((totals.p / targetP) * 100, 100) + '%';
+                document.getElementById('bar-c').style.width = Math.min((totals.c / 250) * 100, 100) + '%';
+                document.getElementById('bar-f').style.width = Math.min((totals.f / 70) * 100, 100) + '%';
+
+                // Status Logic
+                const badge = document.getElementById('status-badge');
+                const diffMsg = document.getElementById('diff-msg');
+                const diff = state.tdee - totals.cals;
+
+                if (diff > 50) {
+                    badge.className = "status-pill bg-green-500/20 text-green-400 border border-green-500/30";
+                    badge.textContent = "Calorie Deficit";
+                    diffMsg.textContent = `${diff} kcal remaining for today.`;
+                } else if (diff < -50) {
+                    badge.className = "status-pill bg-red-500/20 text-red-400 border border-red-500/30";
+                    badge.textContent = "Calorie Surplus";
+                    diffMsg.textContent = `You are ${Math.abs(diff)} kcal over your goal.`;
+                } else {
+                    badge.className = "status-pill bg-blue-500/20 text-blue-400 border border-blue-500/30";
+                    badge.textContent = "Maintenance";
+                    diffMsg.textContent = "Perfectly balanced with your TDEE.";
+                }
+            }
+
+            // List Update
+            const list = document.getElementById('log-list');
+            if (state.log.length > 0) {
+                list.innerHTML = state.log.map(i => `
+                    <div class="flex justify-between border-b border-slate-800 pb-2">
+                        <span>${i.name} <span class="text-[10px] text-slate-500 uppercase">x${i.qty}</span></span>
+                        <span class="text-white font-bold">${i.cals} kcal</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function saveAndSync() {
+            localStorage.setItem('desiFitState', JSON.stringify(state));
+        }
+
+        // Initialize to Food Log Tab for testing
+        switchTab('foodlog');
+    </script>
 </body>
 </html>
