@@ -3,156 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness Dashboard</title>
+    <title>FitTrack AI | Midnight Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
-     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #e4e4e7; /* zinc-200 */
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* Slate 950 */
+            color: #f1f5f9;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
-
-        /* Studia-like Card Style */
-        .studia-card {
-            background-color: #18181b; /* zinc-900 */
-            border: 1px solid #27272a; /* zinc-800 */
-            border-radius: 1rem;
-            transition: all 0.2s ease;
-        }
-        .studia-card:hover {
-            border-color: #3f3f46; /* zinc-700 */
-            transform: translateY(-1px);
+        .glass-card {
+            background: rgba(15, 23, 42, 0.8); /* Slate 900 */
+            border: 1px solid rgba(56, 189, 248, 0.1); /* Sky 400 */
+            border-radius: 1.25rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        /* Nav Item Styles */
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+        }
+
         .nav-item {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1rem;
             border-radius: 0.75rem;
-            color: #a1a1aa; /* zinc-400 */
-            font-weight: 500;
+            color: #94a3b8;
             transition: all 0.2s;
             cursor: pointer;
         }
-        .nav-item:hover {
-            background-color: #27272a;
-            color: #fff;
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
         }
-        .nav-item.active {
-            background-color: #27272a;
-            color: #fff;
+
+        .blue-gradient {
+            background: linear-gradient(135deg, #38bdf8 0%, #1d4ed8 100%);
         }
-        
-        .studia-input {
-            background-color: #000;
-            border: 1px solid #27272a;
+
+        .input-field {
+            background: #0f172a;
+            border: 1px solid #1e293b;
             color: white;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             padding: 0.75rem;
             width: 100%;
-            transition: border-color 0.2s;
-        }
-        .studia-input:focus {
             outline: none;
-            border-color: #10b981; /* emerald-500 */
         }
-        
-        /* Ad Placeholder Styling */
-        .ad-label {
-            font-size: 10px;
-            color: #3f3f46;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 4px;
-            text-align: center;
+
+        .input-field:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
         }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
 
-    <aside class="w-64 bg-black border-r border-zinc-800 hidden md:flex flex-col p-6">
+    <aside class="w-72 bg-slate-950 border-r border-slate-900 hidden md:flex flex-col p-6">
         <div class="flex items-center gap-3 mb-10 px-2">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-green-600"></div>
-            <h1 class="text-xl font-bold tracking-tight text-white">FitTrack AI</h1>
+            <div class="w-10 h-10 rounded-xl blue-gradient flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight text-white">FitTrack <span class="text-blue-400">AI</span></h1>
         </div>
 
-        <nav class="space-y-1 flex-1">
-            <div class="nav-item active" onclick="switchView('dashboard')">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                Dashboard
-            </div>
-            <div class="nav-item" onclick="switchView('workouts')">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                Log Workout
-            </div>
-            <div class="nav-item" onclick="switchView('nutrition')">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4(rest of path)"></path></svg>
-                Nutrition
-            </div>
-            <div class="nav-item" onclick="switchView('profile')">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                Profile & TDEE
-            </div>
+        <nav class="space-y-2 flex-1">
+            <div class="nav-item active" onclick="switchView('dashboard')">Dashboard</div>
+            <div class="nav-item" onclick="switchView('workouts')">Workouts</div>
+            <div class="nav-item" onclick="switchView('nutrition')">Nutrition</div>
+            <div class="nav-item" onclick="switchView('profile')">TDEE Calc</div>
         </nav>
 
-        <div class="mt-6 mb-6">
-            <p class="ad-label">Advertisement</p>
-            <div class="studia-card p-1 bg-zinc-900/50">
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                     data-ad-slot="YYYYYYYYYY"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-        </div>
-
-        <div class="pt-6 border-t border-zinc-800">
-            <div class="flex items-center gap-3 px-2">
-                <div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400">ID</div>
-                <div class="overflow-hidden">
-                    <p class="text-sm font-medium text-white">User</p>
-                    <p class="text-xs text-zinc-500 truncate" id="user-id-display">Loading...</p>
-                </div>
-            </div>
+        <div class="mt-4 p-2 glass-card text-center overflow-hidden">
+            <p class="text-[9px] text-slate-500 mb-2 uppercase">Sponsored</p>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="YYYYYYYYYY" data-ad-format="auto"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
     </aside>
 
-    <main class="flex-1 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8">
+    <main class="flex-1 overflow-y-auto p-4 md:p-10 pb-24">
         
-        <div class="mb-8">
-            <p class="ad-label">Advertisement</p>
-            <div class="min-h-[90px] w-full bg-zinc-900/30 rounded-xl flex items-center justify-center border border-zinc-800/50">
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                     data-ad-slot="ZZZZZZZZZZ"
-                     data-ad-format="horizontal"
-                     data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <div class="mb-8 overflow-hidden rounded-xl border border-slate-900 bg-slate-900/50">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="ZZZZZZZZZZ" data-ad-format="horizontal"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div id="view-dashboard" class="space-y-8">
+            <header>
+                <h2 class="text-4xl font-bold text-white">Your Stats</h2>
+                <p class="text-slate-400">Keep pushing towards your goals.</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6">
+                    <p class="text-sm text-slate-400 uppercase">Burned Today</p>
+                    <p id="stat-burned" class="text-4xl font-bold text-white mt-2">0</p>
+                    <div class="mt-4 h-1.5 w-full bg-slate-800 rounded-full"><div class="h-full bg-blue-500 w-2/3 rounded-full"></div></div>
+                </div>
+                <div class="glass-card p-6">
+                    <p class="text-sm text-slate-400 uppercase">Consumed Today</p>
+                    <p id="stat-consumed" class="text-4xl font-bold text-white mt-2">0</p>
+                    <div class="mt-4 h-1.5 w-full bg-slate-800 rounded-full"><div class="h-full bg-cyan-400 w-1/3 rounded-full"></div></div>
+                </div>
+                <div class="glass-card p-6 border-blue-500/30">
+                    <p class="text-sm text-blue-400 uppercase font-bold">Net Balance</p>
+                    <p id="stat-balance" class="text-4xl font-bold text-white mt-2">--</p>
+                    <p id="stat-balance-desc" class="text-xs mt-2 text-slate-500">Calculate TDEE to see balance</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-8">
+                <h3 class="text-xl font-bold mb-6">Recent Activity</h3>
+                <div id="activity-list" class="space-y-4">
+                    <p class="text-slate-500 text-sm">No activity logged yet.</p>
+                </div>
             </div>
         </div>
 
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold text-white mb-1">Welcome back</h2>
-            <p class="text-zinc-500">Here's your daily fitness breakdown.</p>
+        <div id="view-workouts" class="hidden max-w-2xl mx-auto space-y-6">
+            <div class="glass-card p-8">
+                <h3 class="text-2xl font-bold mb-6">Log Workout</h3>
+                <form id="workout-form" class="space-y-4">
+                    <input type="text" id="w-name" class="input-field" placeholder="Exercise (e.g., Squats)" required>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="number" id="w-sets" class="input-field" placeholder="Sets" required>
+                        <input type="number" id="w-reps" class="input-field" placeholder="Reps" required>
+                    </div>
+                    <button type="submit" class="w-full blue-gradient text-white font-bold py-3 rounded-xl">Save Workout</button>
+                </form>
+            </div>
         </div>
 
-        </main>
+        <div id="view-nutrition" class="hidden max-w-2xl mx-auto space-y-6">
+            <div class="glass-card p-8 border-cyan-500/20">
+                <h3 class="text-2xl font-bold mb-6">AI Nutrition Log</h3>
+                <form id="food-form" class="space-y-4">
+                    <input type="text" id="f-item" class="input-field" placeholder="What did you eat? (e.g., 2 Eggs)" required>
+                    <input type="number" id="f-weight" class="input-field" placeholder="Weight in grams (optional)">
+                    <button type="submit" id="f-btn" class="w-full bg-cyan-500 text-slate-950 font-bold py-3 rounded-xl">Analyze with AI</button>
+                </form>
+                <div id="ai-result" class="hidden mt-6 p-4 bg-slate-950 rounded-xl border border-slate-800">
+                    </div>
+            </div>
+        </div>
 
-    </body>
+        <div id="view-profile" class="hidden max-w-2xl mx-auto space-y-6">
+            <div class="glass-card p-8">
+                <h3 class="text-2xl font-bold mb-6">TDEE Calculator</h3>
+                <form id="tdee-form" class="space-y-4">
+                    <select id="t-gender" class="input-field"><option value="male">Male</option><option value="female">Female</option></select>
+                    <div class="grid grid-cols-3 gap-4">
+                        <input type="number" id="t-age" class="input-field" placeholder="Age" required>
+                        <input type="number" id="t-height" class="input-field" placeholder="Height (cm)" required>
+                        <input type="number" id="t-weight" class="input-field" placeholder="Weight (kg)" required>
+                    </div>
+                    <select id="t-activity" class="input-field">
+                        <option value="1.2">Sedentary</option>
+                        <option value="1.55">Moderate</option>
+                        <option value="1.9">Extreme</option>
+                    </select>
+                    <button type="submit" class="w-full blue-gradient text-white font-bold py-3 rounded-xl">Calculate Daily Goal</button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let state = JSON.parse(localStorage.getItem('fittrack_data')) || { workouts: [], foods: [], tdee: 0 };
+
+        function switchView(view) {
+            ['dashboard', 'workouts', 'nutrition', 'profile'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function updateDashboard() {
+            const burned = state.workouts.length * 150; // Simple estimate
+            const consumed = state.foods.reduce((s, f) => s + f.cals, 0);
+            document.getElementById('stat-burned').textContent = burned;
+            document.getElementById('stat-consumed').textContent = consumed;
+            
+            if(state.tdee > 0) {
+                const balance = (state.tdee + burned) - consumed;
+                document.getElementById('stat-balance').textContent = balance;
+                document.getElementById('stat-balance-desc').textContent = `Target: ${state.tdee} kcal/day`;
+            }
+
+            const list = document.getElementById('activity-list');
+            const recent = [...state.workouts, ...state.foods].slice(-5).reverse();
+            list.innerHTML = recent.map(item => `
+                <div class="flex justify-between items-center p-3 bg-slate-900/50 rounded-lg border border-slate-800">
+                    <span>${item.name || item.item}</span>
+                    <span class="text-blue-400 font-bold">${item.sets ? item.sets+' sets' : item.cals+' kcal'}</span>
+                </div>
+            `).join('');
+            
+            localStorage.setItem('fittrack_data', JSON.stringify(state));
+        }
+
+        document.getElementById('workout-form').onsubmit = (e) => {
+            e.preventDefault();
+            state.workouts.push({ name: document.getElementById('w-name').value, sets: document.getElementById('w-sets').value });
+            updateDashboard();
+            e.target.reset();
+            alert("Workout Logged!");
+        };
+
+        document.getElementById('tdee-form').onsubmit = (e) => {
+            e.preventDefault();
+            const w = document.getElementById('t-weight').value;
+            const h = document.getElementById('t-height').value;
+            const a = document.getElementById('t-age').value;
+            const bmr = (10 * w) + (6.25 * h) - (5 * a) + 5;
+            state.tdee = Math.round(bmr * document.getElementById('t-activity').value);
+            updateDashboard();
+            alert("Goal Updated: " + state.tdee + " kcal");
+        };
+
+        // Simplified AI Simulation (Since you need an API key for real Gemini)
+        document.getElementById('food-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('f-btn');
+            btn.textContent = "Analyzing...";
+            
+            // Simulating API response for demo - In production, use your fetch call here
+            setTimeout(() => {
+                const cals = Math.floor(Math.random() * 500) + 100;
+                state.foods.push({ item: document.getElementById('f-item').value, cals });
+                updateDashboard();
+                btn.textContent = "Analyzed & Logged!";
+                setTimeout(() => btn.textContent = "Analyze with AI", 2000);
+                e.target.reset();
+            }, 1000);
+        };
+
+        updateDashboard();
+    </script>
+</body>
 </html>
